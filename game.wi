@@ -1,0 +1,30 @@
+title = "Castle of darknes"
+start = cell
+end = terace
+
+locations :
+    cell: 
+        description "Dark place with barelly any light"
+    corridor: 
+        description "Long room with no widnows"
+    terace: 
+        description "Big balcony with a view of stary night" 
+        blocked candle
+
+connections :
+    cell N corridor
+    corridor W terace
+
+objects :
+    candle : 
+        description "Candle with a black flame" 
+        canBePickedUp
+        in trunk
+    painting : 
+        description "Paiting of a queen"
+        in trunk 
+    trunk :
+        description "Old trunk"
+        location corridor
+        canBeOpened
+        canBeLocked

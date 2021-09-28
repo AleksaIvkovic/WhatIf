@@ -1,0 +1,29 @@
+Game: 
+    'title' '=' title=STRING
+    'start' '=' start=[Location]
+    'end' '=' end=[Location]
+    'locations' ':' locations+=Location
+    'connections' ':' connections+=Connection
+    'objects' ':' objects+=Object
+;
+
+Location:
+    name=ID ':' (('description' description=STRING) ('blocked' blocker=[Object])?)#
+;
+
+Connection: 
+    fromL=[Location] direction=Direction toL=[Location]
+;
+
+Direction:
+    "N" | "E" | "S" | "W" | "NE" | "NW" | "SE" | "SW"
+;
+
+Object:
+    name=ID ':'
+        (('description' description=STRING)  
+        (canBePickedUp ?= 'canBePickedUp' ('pickedUp' pickedUp=BOOL)?)
+        (canBeOpened ?= 'canBeOpened' ('opened' opened=BOOL)?)
+        (canBeLocked ?= 'canBeLocked' ('locked' locked=BOOL)?)
+        ('location' location=[Location] | ('in' containedObject=[Object])))#
+;

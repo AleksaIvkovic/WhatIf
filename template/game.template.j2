@@ -1,0 +1,37 @@
+title = "{{game.title}}"
+start = {{game.current_section.name}}
+end = {{game.end.name}}
+
+locations :
+    {%for location in game.locations%}
+        {{location.name}}:
+            description "{{location.description}}"
+        {%if location.blocker%}
+            blocked {{location.blocker.name}}
+        {%endif%}
+    {%endfor%}
+
+connections :
+    {%for connection in game.connections%}
+        {{connection.fromL.name}} {{connection.direction}} {{connection.toL.name}}
+    {%endfor%}
+
+objects :
+    {%for object in game.objects%}
+    {{object.name}}:
+        description "{{object.description}}"
+        {%if object.canBePickedUp %}
+        canBePickedUp pickedUp {{object.pickedUp|lower}}
+        {%endif%} 
+        {%if object.canBeOpened %}
+        canBeOpened opened {{object.opened|lower}}
+        {%endif%} 
+        {%if object.canBeLocked %}
+        canBeLocked locked {{object.locked|lower}}
+        {%endif%}
+        {%if object.location %}
+        location {{object.location.name}}
+        {%else%}
+        in {{object.containedObject.name}}
+        {%endif%}
+    {%endfor%}
