@@ -1,14 +1,16 @@
 Game: 
     'title' '=' title=STRING
     'start' '=' start=[Location]
-    'end' '=' end=[Location]
+    'end' '=' end=[State]
     'locations' ':' locations+=Location
     'connections' ':' connections+=Connection
     'objects' ':' objects+=Object
+    'states' ':' states+=State
+    'actions' ':' actions+=Action
 ;
 
 Location:
-    name=ID ':' (('description' description=STRING) ('blocked' blocker=[Object])?)#
+    name=ID ':' Description (conditions+=[Condition][','] message=STRING)?
 ;
 
 Connection: 
@@ -21,9 +23,37 @@ Direction:
 
 Object:
     name=ID ':'
-        (('description' description=STRING)  
-        (canBePickedUp ?= 'canBePickedUp' ('pickedUp' pickedUp=BOOL)?)
-        (canBeOpened ?= 'canBeOpened' ('opened' opened=BOOL)?)
-        (canBeLocked ?= 'canBeLocked' ('locked' locked=BOOL)?)
-        ('location' location=[Location] | ('in' containedObject=[Object])))#
+        (Description 
+        ('location' location=[Location] ('contains' containedObject+=[Object][','])?) 
+        )#
+;
+
+Description:
+    'description' description=STRING
+;
+
+State:
+    name=ID ':' 
+        'related' related=[Location | Object]
+        'state' state=BOOL
+        'on_true' true_message=STRING (conditions+=Condition[','])? 
+        'on_false' false_message=STRING (conditions+=Condition[','])?
+;
+
+Condition:
+    state=[State] '==' value=BOOL
+;
+
+Action:
+    name=ID  related=[Location | Object] ':'
+        ActionType
+;
+
+ActionType:
+    StateChange
+;
+
+StateChange:
+    ('condition' conditions+=Condition[','])?
+    state=[State] '=' value=BOOL
 ;
