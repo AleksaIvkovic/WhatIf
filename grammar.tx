@@ -1,7 +1,9 @@
+//Inventory is when object location is Player
+
 Game: 
     'title' '=' title=STRING
     'start' '=' start=[Location]
-    'end' '=' end=[State]
+    'end' ':' end=Conditions
     'locations' ':' locations+=Location
     'connections' ':' connections+=Connection
     'objects' ':' objects+=Object
@@ -10,50 +12,86 @@ Game:
 ;
 
 Location:
-    name=ID ':' Description (conditions+=[Condition][','] message=STRING)?
+    name=ID ':' Description Conditions?
 ;
 
 Connection: 
     fromL=[Location] direction=Direction toL=[Location]
 ;
 
-Direction:
-    "N" | "E" | "S" | "W" | "NE" | "NW" | "SE" | "SW"
-;
-
 Object:
-    name=ID ':'
-        (Description 
-        ('location' location=[Location] ('contains' containedObject+=[Object][','])?) 
-        )#
-;
-
-Description:
-    'description' description=STRING
+    name=ID ':' Description 'location' '=' location=[ObjectLocation] 
 ;
 
 State:
     name=ID ':' 
-        'related' related=[Location | Object]
-        'state' state=BOOL
-        'on_true' true_message=STRING (conditions+=Condition[','])? 
-        'on_false' false_message=STRING (conditions+=Condition[','])?
-;
-
-Condition:
-    state=[State] '==' value=BOOL
+    'object' '=' related=[ObjectLocation]
+    'state' '=' state=BOOL
+    'when_true' '=' true_message=STRING 
+    'when_false' '=' false_message=STRING
 ;
 
 Action:
-    name=ID  related=[Location | Object] ':'
-        ActionType
+    StateAction | DescribeAction
 ;
 
-ActionType:
-    StateChange
+DescribeAction:
+    'exam' related=[ObjectLocation] ':' descriptions+=DescribeConditions
 ;
 
-StateChange:
-    ('condition' conditions+=Condition[','])?
+DescribeConditions:
+    ('conditions' ':' conditions+=Condition)? 'message' '=' message=STRING ('print_content' '=' print_content=BOOL)?
+;
+
+StateAction:
+    name=ID  related=[Object] ':' Conditions? Changes
+;
+
+Changes:
+    'changes' ':' state_changes+=Change
+;
+
+Change:
+    StateValueChange | LocationChange
+;
+
+LocationChange:
+    object=[Object] ':' 'location' '=' location=[ObjectLocation]
+;
+
+ObjectLocation:
+    Location | Object
+;
+
+Conditions:
+    'conditions' ':' conditions+=Condition Message?
+;
+
+Condition:
+    StateCondition | LocationCondition
+;
+
+StateCondition:
+    state=[State] '==' value=BOOL
+;
+
+LocationCondition:
+    (object=[Object] ':' 'location' '==' location=[ObjectLocation])
+;
+
+Description:
+    'description' '=' description=STRING
+;
+
+StateValueChange:
     state=[State] '=' value=BOOL
+;
+
+Message: 
+    'success' '=' success=STRING
+    'failure' '=' failure=STRING
+;
+
+Direction:
+    "N" | "E" | "S" | "W" | "NE" | "NW" | "SE" | "SW"
 ;

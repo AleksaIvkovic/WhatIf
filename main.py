@@ -337,10 +337,10 @@ class GamePlay(cmd.Cmd):
 
 def main():
     this_folder = dirname(__file__)
-    game_mm = metamodel_from_file(join(this_folder, 'grammar.tx'), classes=[Game, Location, Connection, Object])
+    game_mm = metamodel_from_file(join(this_folder, 'grammar.tx'))#, classes=[Game, Location, Connection, Object])
 
     game = game_mm.model_from_file(join(this_folder, 'game.wi'))
-    GamePlay(game, game_mm).cmdloop()
+    #GamePlay(game, game_mm).cmdloop()
 
 if __name__ == "__main__":
     main()

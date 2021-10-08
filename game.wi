@@ -1,30 +1,96 @@
 title = "Castle of darknes"
 start = cell
-end = terace
-
+end : 
+    conditions : 
+        player : 
+            location == terace
+        success = "Congratulations you won"
+        failure = ""
 locations :
-    cell: 
-        description "Dark place with barelly any light"
-    corridor: 
-        description "Long room with no widnows"
-    terace: 
-        description "Big balcony with a view of stary night" 
-        blocked candle
-
-connections :
-    cell N corridor
-    corridor W terace
-
-objects :
-    candle : 
-        description "Candle with a black flame" 
-        canBePickedUp
-        in trunk
-    painting : 
-        description "Paiting of a queen"
-        in trunk 
-    trunk :
-        description "Old trunk"
-        location corridor
-        canBeOpened
-        canBeLocked
+    cell :
+        description = "Dark place with barelly any light"
+    hallway :
+        description = "Narow hallway with small windows"
+    terace :
+        description = "Large terace overlooking the forest"
+        conditions:
+            door_unlocked == true
+connections:
+    cell N hallway
+    hallway W terace
+objects:
+    trunk:
+        description = "Old trunk"
+        location = hallway
+    gold_key:
+        description = "Gold key"
+        location = trunk
+    silver_key:
+        description = "Silver key"
+        location = cell
+    player:
+        description = "Player"
+        location = cell
+    door:
+        description = "Door to the terace"
+        location = hallway
+states:
+    trunk_unlocked:
+        object = trunk
+        state = false
+        when_true = "Trunk is unlocked"
+        when_false = "Trunk is locked, you need a silver key to unlock it"
+    trunk_opened:
+        object = trunk
+        state = false
+        when_true = "Trunk is opened"
+        when_false = "Trunk is closed"
+    door_unlocked:
+        object = door
+        state = false
+        when_true = "Door is unlocked"
+        when_false = "Door is locked"
+actions:
+    open trunk :
+        conditions:
+            trunk_unlocked == true
+            success = "You have opened the trunk"
+            failure = "The trunk is locked"
+        changes:
+            trunk_opened = true
+    unlock trunk :
+        changes:
+            trunk_unlocked = true
+    get gold_key:
+        conditions:
+            trunk_opened == true
+            success = "You got the gold key"
+            failure = "The trunk is closed"
+        changes:
+            gold_key :
+                location = player
+    get silver_key:
+        changes:
+            silver_key :
+                location = player
+    unlock door:
+        conditions:
+            gold_key :
+                location == player
+            player :
+                location == hallway
+            success = "You uncloked the door"
+            failure = "You need a gold key to unclok the door"
+        changes:
+            door_unlocked = true
+    exam trunk:
+        conditions:
+            trunk_opened == true
+            trunk:
+                location == hallway
+            message = "Inside you: "
+            print_content = true
+        conditions:
+            trunk:
+                location == hallway
+            message = "Old trunk"
