@@ -4,8 +4,7 @@ end :
     conditions : 
         player : 
             location == terace
-        success = "Congratulations you won"
-        failure = ""
+        message = "Congratulations you won"
 locations :
     cell :
         description = "Dark place with barelly any light"
@@ -15,6 +14,7 @@ locations :
         description = "Large terace overlooking the forest"
         conditions:
             door_unlocked == true
+            message = "The door is locked"
 connections:
     cell N hallway
     hallway W terace
@@ -27,9 +27,6 @@ objects:
         location = trunk
     silver_key:
         description = "Silver key"
-        location = cell
-    player:
-        description = "Player"
         location = cell
     door:
         description = "Door to the terace"
@@ -90,7 +87,12 @@ actions:
                 location == hallway
             message = "Inside you: "
             print_content = true
-        conditions:
-            trunk:
-                location == hallway
-            message = "Old trunk"
+action_verbs:
+    open
+    description = "Open an object"
+    unlock
+    description = "Unlock an object"
+    get
+    description = "Pick up an object"
+    exam
+    description = "Rediscribes an object"

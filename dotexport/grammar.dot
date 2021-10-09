@@ -1,0 +1,104 @@
+
+    digraph textX {
+    fontname = "Bitstream Vera Sans"
+    fontsize = 8
+    node[
+        shape=record,
+        style=filled,
+        fillcolor=aliceblue
+    ]
+    nodesep = 0.3
+    edge[dir=black,arrowtail=empty]
+
+
+2930146832112[ label="{Game|title: STRING\l}"]
+
+2930146844384[ label="{Verb|name: ID\l}"]
+
+2930146829280[ label="{Location|name: ID\l}"]
+
+2930146810400[ label="{Conditions|}"]
+
+2930146809456[ label="{*Condition|}"]
+
+2930146817008[ label="{StateCondition|value: BOOL\l}"]
+
+2930146819840[ label="{LocationCondition|}"]
+
+2930146852880[ label="{*ObjectLocation|}"]
+
+2930146813232[ label="{Connection|direction: Direction\l}"]
+
+2930146833056[ label="{Object|name: ID\l}"]
+
+2930146828336[ label="{State|name: ID\lstate: BOOL\ltrue_message: STRING\lfalse_message: STRING\l}"]
+
+2930146811344[ label="{*Change|}"]
+
+2930146863264[ label="{StateValueChange|value: BOOL\l}"]
+
+2930146857600[ label="{LocationChange|}"]
+
+2930146827392[ label="{Action|}"]
+
+2930146864208[ label="{*ActionType|}"]
+
+2930178527008[ label="{StateAction|}"]
+
+2930178525120[ label="{DescribeAction|}"]
+
+2930146826448[ label="{DescribeConditions|print_content: BOOL\l}"]
+
+2930146825504[ label="{Description|text: STRING\l}"]
+
+2930146837776[ label="{Message|text: STRING\lsuccess: STRING\lfailure: STRING\l}"]
+
+
+
+2930146832112 -> 2930146829280[headlabel="start "]
+2930146832112 -> 2930146810400[arrowtail=diamond, dir=both, headlabel="end "]
+2930146832112 -> 2930146829280[arrowtail=diamond, dir=both, headlabel="locations 1..*"]
+2930146832112 -> 2930146813232[arrowtail=diamond, dir=both, headlabel="connections 1..*"]
+2930146832112 -> 2930146833056[arrowtail=diamond, dir=both, headlabel="objects 1..*"]
+2930146832112 -> 2930146828336[arrowtail=diamond, dir=both, headlabel="states 1..*"]
+2930146832112 -> 2930146827392[arrowtail=diamond, dir=both, headlabel="actions 1..*"]
+2930146832112 -> 2930146844384[arrowtail=diamond, dir=both, headlabel="verbs 1..*"]
+2930146844384 -> 2930146825504[arrowtail=diamond, dir=both, headlabel="description "]
+2930146829280 -> 2930146825504[arrowtail=diamond, dir=both, headlabel="description "]
+2930146829280 -> 2930146810400[arrowtail=diamond, dir=both, headlabel="requirements "]
+2930146810400 -> 2930146809456[arrowtail=diamond, dir=both, headlabel="conditions 1..*"]
+2930146810400 -> 2930146837776[arrowtail=diamond, dir=both, headlabel="message "]
+2930146809456 -> 2930146817008 [dir=back]
+2930146809456 -> 2930146819840 [dir=back]
+2930146817008 -> 2930146828336[headlabel="state "]
+2930146819840 -> 2930146833056[headlabel="object "]
+2930146819840 -> 2930146852880[headlabel="location "]
+2930146852880 -> 2930146829280 [dir=back]
+2930146852880 -> 2930146833056 [dir=back]
+2930146813232 -> 2930146829280[headlabel="from_location "]
+2930146813232 -> 2930146829280[headlabel="to_location "]
+2930146833056 -> 2930146825504[arrowtail=diamond, dir=both, headlabel="description "]
+2930146833056 -> 2930146852880[headlabel="location "]
+2930146828336 -> 2930146852880[headlabel="related "]
+2930146811344 -> 2930146863264 [dir=back]
+2930146811344 -> 2930146857600 [dir=back]
+2930146863264 -> 2930146828336[headlabel="state "]
+2930146857600 -> 2930146833056[headlabel="object "]
+2930146857600 -> 2930146852880[headlabel="location "]
+2930146827392 -> 2930146844384[headlabel="verb "]
+2930146827392 -> 2930146833056[headlabel="related "]
+2930146827392 -> 2930146864208[arrowtail=diamond, dir=both, headlabel="execution "]
+2930146864208 -> 2930178527008 [dir=back]
+2930146864208 -> 2930178525120 [dir=back]
+2930178527008 -> 2930146810400[arrowtail=diamond, dir=both, headlabel="conditions "]
+2930178527008 -> 2930146811344[arrowtail=diamond, dir=both, headlabel="changes 1..*"]
+2930178525120 -> 2930146826448[arrowtail=diamond, dir=both, headlabel="descriptions 1..*"]
+2930146826448 -> 2930146810400[arrowtail=diamond, dir=both, headlabel="conditions "]
+match_rules [ shape=plaintext, label=< <table>
+	<tr>
+		<td><b>Direction</b></td><td>N|E|S|W|NE|NW|SE|SW</td>
+	</tr>
+</table> >]
+
+
+}

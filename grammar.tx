@@ -1,5 +1,3 @@
-//Inventory is when object location is Player
-
 Game: 
     'title' '=' title=STRING
     'start' '=' start=[Location]
@@ -9,62 +7,19 @@ Game:
     'objects' ':' objects+=Object
     'states' ':' states+=State
     'actions' ':' actions+=Action
+    'action_verbs' ':' verbs+=Verb
+;
+
+Verb:
+    name=ID description=Description
 ;
 
 Location:
-    name=ID ':' Description Conditions?
-;
-
-Connection: 
-    fromL=[Location] direction=Direction toL=[Location]
-;
-
-Object:
-    name=ID ':' Description 'location' '=' location=[ObjectLocation] 
-;
-
-State:
-    name=ID ':' 
-    'object' '=' related=[ObjectLocation]
-    'state' '=' state=BOOL
-    'when_true' '=' true_message=STRING 
-    'when_false' '=' false_message=STRING
-;
-
-Action:
-    StateAction | DescribeAction
-;
-
-DescribeAction:
-    'exam' related=[ObjectLocation] ':' descriptions+=DescribeConditions
-;
-
-DescribeConditions:
-    ('conditions' ':' conditions+=Condition)? 'message' '=' message=STRING ('print_content' '=' print_content=BOOL)?
-;
-
-StateAction:
-    name=ID  related=[Object] ':' Conditions? Changes
-;
-
-Changes:
-    'changes' ':' state_changes+=Change
-;
-
-Change:
-    StateValueChange | LocationChange
-;
-
-LocationChange:
-    object=[Object] ':' 'location' '=' location=[ObjectLocation]
-;
-
-ObjectLocation:
-    Location | Object
+    name=ID ':' description=Description requirements=Conditions?
 ;
 
 Conditions:
-    'conditions' ':' conditions+=Condition Message?
+    'conditions' ':' conditions+=Condition message=Message?
 ;
 
 Condition:
@@ -76,20 +31,69 @@ StateCondition:
 ;
 
 LocationCondition:
-    (object=[Object] ':' 'location' '==' location=[ObjectLocation])
+    object=[Object] ':' 'location' '==' location=[ObjectLocation]
 ;
 
-Description:
-    'description' '=' description=STRING
+ObjectLocation:
+    Location | Object
+;
+
+Connection: 
+    from_location=[Location] direction=Direction to_location=[Location]
+;
+
+Object:
+    name=ID ':' description=Description? 'location' '=' location=[ObjectLocation] 
+;
+
+State:
+    name=ID ':' 
+    'object' '=' related=[ObjectLocation]
+    'state' '=' state=BOOL
+    'when_true' '=' true_message=STRING 
+    'when_false' '=' false_message=STRING
+;
+
+Change:
+    StateValueChange | LocationChange
 ;
 
 StateValueChange:
     state=[State] '=' value=BOOL
 ;
 
+LocationChange:
+    object=[Object] ':' 'location' '=' location=[ObjectLocation]
+;
+
+Action:
+    verb=[Verb]  related=[Object] ':' execution=ActionType
+;
+
+ActionType:
+    StateAction | DescribeAction
+;
+
+StateAction:
+    conditions=Conditions? 'changes' ':' changes+=Change
+;
+
+DescribeAction:
+    descriptions+=DescribeConditions
+;
+
+DescribeConditions:
+    conditions=Conditions? ('print_content' '=' print_content=BOOL)?
+;
+
+Description:
+    'description' '=' text=STRING
+;
+
 Message: 
-    'success' '=' success=STRING
-    'failure' '=' failure=STRING
+    ('message' '=' text=STRING) | 
+    ('success' '=' success=STRING
+    'failure' '=' failure=STRING)
 ;
 
 Direction:
