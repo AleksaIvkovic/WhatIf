@@ -82,7 +82,7 @@ def main():
             self.game.handle_custom_actions(verb.name, attr)
         return handle_custom_actions
 
-    for verb in game.verbs.values():
+    for verb in game.verbs:
         function = custom_factory(verb)
 
         setattr(GamePlay, 'do_' + verb.name, function)

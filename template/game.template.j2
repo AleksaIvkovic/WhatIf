@@ -1,37 +1,95 @@
 title = "{{game.title}}"
-start = {{game.current_section.name}}
-end = {{game.end.name}}
-
-locations :
-    {%for location in game.locations%}
-        {{location.name}}:
-            description "{{location.description}}"
-        {%if location.blocker%}
-            blocked {{location.blocker.name}}
+start = {{game.player.location.name}}
+end : 
+    conditions:
+    {%for condition in game.end.conditions%}
+        {%if condition.__class__.__name__ == "StateCondition"%}
+        {{condition.state.name}} == {{condition.value|lower}}
+        {%else%}
+        {{condition.object.name}}:
+            location == {{condition.location.name}}
         {%endif%}
     {%endfor%}
+    {%if game.end.message.text != None%}
+        message = "{{game.end.message.text}}"
+        {%else%}
+        success = "{{game.end.message.success}}"
+        failure = "{{game.end.message.failure}}"
+    {%endif%}
+locations :
+{%for location in game.locations%}
+    {{location.name}}:
+        description = "{{location.description.text}}"
+    {%if location.requirements%}
+        conditions:
+        {%for condition in location.requirements.conditions%}
+            {%if condition.__class__.__name__ == "StateCondition"%}
+            {{condition.state.name}} == {{condition.value|lower}}
+            {%else%}
+            {{condition.object.name}}:
+                location == {{condition.location.name}}
+            {%endif%}
+        {%endfor%}
+        {%if location.requirements.message.text != None%}
+        message = "{{location.requirements.message.text}}"
+        {%else%}
+        success = "{{location.requirements.message.success}}"
+        failure = "{{location.requirements.message.failure}}"
+        {%endif%}
+    {%endif%}
+{%endfor%}
 
 connections :
-    {%for connection in game.connections%}
-        {{connection.fromL.name}} {{connection.direction}} {{connection.toL.name}}
-    {%endfor%}
+{%for connection in game.connections%}
+    {{connection.from_location.name}} {{connection.direction}} {{connection.to_location.name}}
+{%endfor%}
 
 objects :
-    {%for object in game.objects%}
+{%for object in game.objects%}
     {{object.name}}:
-        description "{{object.description}}"
-        {%if object.canBePickedUp %}
-        canBePickedUp pickedUp {{object.pickedUp|lower}}
-        {%endif%} 
-        {%if object.canBeOpened %}
-        canBeOpened opened {{object.opened|lower}}
-        {%endif%} 
-        {%if object.canBeLocked %}
-        canBeLocked locked {{object.locked|lower}}
-        {%endif%}
-        {%if object.location %}
-        location {{object.location.name}}
+        description = "{{object.description.text}}"
+        location = {{object.location.name}}
+{%endfor%}
+
+states:
+{%for state in game.states%}
+    {{state.name}}:
+        object = {{state.related.name}}
+        state = {{state.state}}
+        when_true = "{{state.true_message}}"
+        when_false = "{{state.false_message}}"
+{%endfor%}
+
+actions:
+{%for action in game.actions%}
+    {{action.verb.name}} {{action.related.name}}:
+        {%if action.execution.__class__.__name__ == "StateAction"%}
+        {%if action.execution.conditions%}
+        conditions:
+        {%for condition in action.execution.conditions.conditions%}
+        {%if condition.__class__.__name__ == "StateCondition"%}
+            {{condition.state.name}} == {{condition.value|lower}}
         {%else%}
-        in {{object.containedObject.name}}
+        {{condition.object.name}}:
+            location == {{condition.location.name}}
         {%endif%}
-    {%endfor%}
+        {%endfor%}
+        {%if action.execution.conditions.message.text != None%}
+            message = "{{action.execution.conditions.message.text}}"
+            {%else%}
+            success = "{{action.execution.conditions.message.success}}"
+            failure = "{{action.execution.conditions.message.failure}}"
+        {%endif%}
+        {%endif%}
+        changes:
+        {%for change in action.execution.changes%}
+        {%if change.__class__.__name__ == "StateValueChange"%}
+            {{change.state.name}} = {{change.value|lower}}
+        {%else%}
+            {{change.object.name}}:
+                location = {{change.location.name}}
+        {%endif%}
+        {%endfor%}
+        {%else%}
+        {%endif%}
+{%endfor%}

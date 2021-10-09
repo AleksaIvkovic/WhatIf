@@ -4,6 +4,7 @@ end :
     conditions : 
         player : 
             location == terace
+    success :
         message = "Congratulations you won"
 locations :
     cell :
@@ -14,6 +15,7 @@ locations :
         description = "Large terace overlooking the forest"
         conditions:
             door_unlocked == true
+        failure:
             message = "The door is locked"
 connections:
     cell N hallway
@@ -51,43 +53,51 @@ actions:
     open trunk :
         conditions:
             trunk_unlocked == true
-            success = "You have opened the trunk"
-            failure = "The trunk is locked"
+            message = "The trunk is locked"
         changes:
             trunk_opened = true
+        success:
+            message = "You have opened the trunk"
     unlock trunk :
         changes:
             trunk_unlocked = true
+        success:
+            message = "You have unlocked the trunk"
     get gold_key:
         conditions:
             trunk_opened == true
-            success = "You got the gold key"
-            failure = "The trunk is closed"
+            message = "The trunk is closed"
         changes:
             gold_key :
                 location = player
+        success:
+            message = "You got the gold key"
     get silver_key:
         changes:
             silver_key :
                 location = player
+        success:
+            message = "You got the silver key"
     unlock door:
         conditions:
             gold_key :
                 location == player
+                message = "You need a gold key to unclok the door" 
             player :
                 location == hallway
-            success = "You uncloked the door"
-            failure = "You need a gold key to unclok the door"
         changes:
             door_unlocked = true
+        success:
+            message = "You uncloked the door"
     exam trunk:
         conditions:
             trunk_opened == true
-            trunk:
-                location == hallway
-            message = "Inside you see: "
             print_content = true
+            message = "Inside you see: "
         basic
+    exam silver_key:
+        basic
+
 action_verbs:
     open
     description = "Open an object"

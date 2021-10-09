@@ -1,7 +1,7 @@
 Game: 
     'title' '=' title=STRING
     'start' '=' start=[Location]
-    'end' ':' end=Conditions
+    'end' ':' end=GameEnd
     'locations' ':' locations+=Location
     'connections' ':' connections+=Connection
     'objects' ':' objects+=Object
@@ -10,16 +10,24 @@ Game:
     'action_verbs' ':' verbs+=Verb
 ;
 
+GameEnd:
+    conditions=Conditions 'success' ':' message=Message
+;
+
 Verb:
     name=ID description=Description
 ;
 
 Location:
-    name=ID ':' description=Description requirements=Conditions?
+    name=ID ':' description=Description (requirements=Conditions 'failure' ':' message=Message)? 
 ;
 
 Conditions:
-    'conditions' ':' conditions+=Condition message=Message?
+    'conditions' ':' conditions+=Condition
+;
+
+StateConditions:
+    'conditions' ':' conditions+=StateCondition
 ;
 
 Condition:
@@ -27,11 +35,11 @@ Condition:
 ;
 
 StateCondition:
-    state=[State] '==' value=BOOL
+    state=[State] '==' value=BOOL message=Message?
 ;
 
 LocationCondition:
-    object=[Object] ':' 'location' '==' location=[ObjectLocation]
+    object=[Object] ':' 'location' '==' location=[ObjectLocation] message=Message?
 ;
 
 ObjectLocation:
@@ -50,8 +58,8 @@ State:
     name=ID ':' 
     'object' '=' related=[ObjectLocation]
     'state' '=' state=BOOL
-    'when_true' '=' true_message=STRING 
-    'when_false' '=' false_message=STRING
+    ('when_true' '=' true_message=STRING)?
+    ('when_false' '=' false_message=STRING)?
 ;
 
 Change:
@@ -67,7 +75,7 @@ LocationChange:
 ;
 
 Action:
-    verb=[Verb]  related=[Object] ':' execution=ActionType
+    verb=[Verb]  related=[Object] ':' execution=ActionType 
 ;
 
 ActionType:
@@ -75,7 +83,7 @@ ActionType:
 ;
 
 StateAction:
-    conditions=Conditions? 'changes' ':' changes+=Change
+    conditions=Conditions? 'changes' ':' changes+=Change ('success' ':' message=Message)?
 ;
 
 DescribeAction:
@@ -91,7 +99,7 @@ BasicDescription:
 ;
 
 DescribeConditions:
-    conditions=Conditions ('print_content' '=' print_content=BOOL)?
+    conditions=StateConditions ('print_content' '=' print_content=BOOL)? (message=Message)?
 ;
 
 Description:
@@ -99,9 +107,7 @@ Description:
 ;
 
 Message: 
-    ('message' '=' text=STRING) | 
-    ('success' '=' success=STRING
-    'failure' '=' failure=STRING)
+    'message' '=' text=STRING
 ;
 
 Direction:
