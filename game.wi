@@ -85,8 +85,9 @@ actions:
             trunk_opened == true
             trunk:
                 location == hallway
-            message = "Inside you: "
+            message = "Inside you see: "
             print_content = true
+        basic
 action_verbs:
     open
     description = "Open an object"

@@ -79,11 +79,19 @@ StateAction:
 ;
 
 DescribeAction:
-    descriptions+=DescribeConditions
+    descriptions+=DescriptionType
+;
+
+DescriptionType:
+    BasicDescription | DescribeConditions
+;
+
+BasicDescription:
+    'basic' ('print_content' '=' print_content=BOOL)?
 ;
 
 DescribeConditions:
-    conditions=Conditions? ('print_content' '=' print_content=BOOL)?
+    conditions=Conditions ('print_content' '=' print_content=BOOL)?
 ;
 
 Description:

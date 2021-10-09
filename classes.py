@@ -11,74 +11,9 @@ opposite_direction = {
     "SW": "NE"
 }
 
-class Description(object):
-    def __init__(self, parent, text):
-        self.parent = parent
-        self.text = text
-
-    def __str__(self):
-        return self.text
-
-class Message(object):
-    def __init__(self, parent, text, success, failure):
-        self.parent = parent
-        self.text = text
-        self.success = success
-        self.failure = failure
-
-class DescribeConditions(object):
-    def __init__(self, parent, conditions, print_content):
-        self.parent = parent
-        self.conditions = conditions
-        self.print_content = print_content
-
-class Condition(object):
-    def __init__(self, parent, state, value: bool, object, location):
-        self.parent = parent
-        self.state = state
-        self.value = value
-        self.object = object
-        self.location = location
-
-class Conditions(object):
-    def __init__(self, parent, conditions: List[Condition], message:Message):
-        self.parent = parent
-        self.conditions = conditions
-        self.message = message
-
-class Change(object):
-    def __init__(self, parent, object, location, state, value):
-        self.parent = parent
-        self.object = object
-        self.location = location
-        self.state = state
-        self.value = value
-
-class Action(object):
-    def __init__(self, parent, verb, related, execution):
-        self.parent = parent
-        self.verb = verb
-        self.related = related
-        self.execution = execution
-
-class State(object):
-    def __init__(self, parent, name, related, state, true_message, false_message):
-        self.parent = parent
-        self.name = name
-        self.related = related
-        self.state = state
-        self.true_message = true_message
-        self.false_message = false_message
-
-class Object(object):
-    def __init__(self, parent, name: str, description: Description, location):
-        self.parent = parent
-        self.name = name
-        self.description = description
-        self.location = location
-
-    def __str__(self):
-        return self.description.text
+def convert(list):
+    res_dct = {list[i].name: list[i] for i in range(0, len(list))}
+    return res_dct
 
 class Connection(object):
     def __init__(self, parent, from_location, to_location, direction):
@@ -88,7 +23,7 @@ class Connection(object):
         self.direction = direction
 
 class Location(object):
-    def __init__(self, parent, name: str, description: Description, requirements: Conditions):
+    def __init__(self, parent, name, description, requirements):
         self.parent = parent
         self.name = name
         self.description = description
@@ -96,27 +31,32 @@ class Location(object):
         self.connections = {}
 
     def __str__(self):
-        string = self.description.text
-        string += "\n Exits are on: "
-        for connection in self.connections:
-            string+=f"{connection}, "
-        return string
+        return self.description.text
+
+class Object(object):
+    def __init__(self, parent, name: str, description, location):
+        self.parent = parent
+        self.name = name
+        self.description = description
+        self.location = location
+
+    def __str__(self):
+        return self.description.text
 
 class Game(object):
-    def __init__(self, title: str, start: Location, end: Conditions, locations: List[Location], connections: List[Connection], \
-        objects: List[Object], states: List[Object], actions: List[Action], verbs):
+    def __init__(self, title: str, start, end, locations, connections, objects: List[Object], states, actions, verbs):
         self.title = title
         self.start = start
         self.end = end
-        self.locations = locations
+        self.locations = convert(locations)
         self.connections = connections
-        self.objects = objects
-        self.states = states
+        self.objects = convert(objects)
+        self.states = convert(states)
         self.actions = actions
-        self.verbs = verbs
+        self.verbs = convert(verbs)
 
     def load_location_connections(self):
-        for location in self.locations:
+        for location in self.locations.values():
             for connection in self.connections:
                 if connection.from_location == location:
                     location.connections[connection.direction] = connection
@@ -131,8 +71,8 @@ class Game(object):
         self.player = player
         self.load_location_connections()
         self.player.location = self.start
-        
-    def check_conditions(self, requirements: Conditions):
+
+    def check_conditions(self, requirements):
         for condition in requirements.conditions:
             if condition.__class__.__name__ == "LocationCondition":
                 if condition.object.location != condition.location:
@@ -142,10 +82,74 @@ class Game(object):
                     return False
         return True
 
+    def location_as_string(self, location):
+        string = location.description.text
+        first = True
+        for object in self.objects.values():
+            if object.location == location:
+                if first:
+                    first = False
+                    string += "\nYou see: "
+                string += f"\n\t{object}"
+        
+        i = 1
+        connections = "\nExits are on: "
+        for connection in location.connections:
+            connections += connection.__str__()
+            if i != len(location.connections):
+                connections += ", "
+            i = i + 1
+        string += connections
+        return string
+
+    def print_object(self, object, description):
+        print(object)
+        if description.__class__.__name__ == "DescribeConditions":
+            print(description.conditions.message.text)
+        if description.print_content:
+            for obj in self.objects.values():
+                if obj.location == object:
+                    print(f"\t{obj}")
+
+    def print_location(self, location):
+        print(location.description.text)
+        first = True
+        for object in self.objects.values():
+            if object.location == location:
+                if first:
+                    first = False
+                    print("You see: ")
+                print(f"\t{object}")
+        
+        i = 1
+        connections = "Exits are on: "
+        for connection in location.connections:
+            connections += connection.__str__()
+            if i != len(location.connections):
+                connections += ", "
+            i = i + 1
+        print(connections)
+
+    def print_object(self, object, description):
+        print(object)
+        if description.__class__.__name__ == "DescribeConditions":
+            print(description.conditions.message.text)
+        if description.print_content:
+            for obj in self.objects.values():
+                if obj.location == object:
+                    print(f"\t{obj}")
+
     def print_inventory(self):
-        for object in self.objects:
-            if object.location.name == "player":
-                print(object)
+        inventory = []
+        for object in self.objects.values():
+            if object.location.name == self.player.name:
+                inventory.append(object)
+        if len(inventory) == 0:
+            print("You currently don't have anything in your inventory")
+        else:
+            print("Inventory:")
+            for object in inventory:
+                print(f"\t{object}")
 
     def change_location(self, direction: str):
         if direction.capitalize() == 'UP' or direction.capitalize() == 'U':
@@ -160,12 +164,12 @@ class Game(object):
                     if self.check_conditions(self.end):
                         print(self.end.message.text)
                     else:
-                        print(self.player.location)
+                        self.print_location(self.player.location)
                 else:
                     print(self.player.location.connections[direction.capitalize()].to_location.requirements.message.text)
             else:
                 self.player.location = self.player.location.connections[direction.capitalize()].to_location
-                print(self.player.location)
+                self.print_location(self.player.location)
         else:
             print("There is nothing in that direction")
 
@@ -178,7 +182,7 @@ class Game(object):
 
     def handle_custom_actions(self, verb, object):
         for action in self.actions:
-            if action.verb.name == verb and action.related.name == object:
+            if action.verb.name == verb and (action.related.name == object or action.related == None):
                 if action.execution.__class__.__name__ == "StateAction":
                     if action.execution.conditions != None:
                         if self.check_conditions(action.execution.conditions):
@@ -189,6 +193,13 @@ class Game(object):
                     else:
                         self.execute_changes(action.execution.changes)
                 else:
-                    print("EA")
+                    for description in action.execution.descriptions:
+                        if description.__class__.__name__ == "DescribeConditions":
+                            if self.check_conditions(description.conditions):
+                                self.print_object(action.related, description)
+                                return
+                        else:
+                            self.print_object(action.related, description)
+                            return
                 return
         print("Not a valid object for a command")
