@@ -28,7 +28,7 @@ class Location(object):
         self.requirements = requirements
         self.message = message
         self.connections = {}
-        self.states = {}
+        self.states = []
     
 class Object(object):
     def __init__(self, parent, name: str, description, location):
@@ -36,7 +36,7 @@ class Object(object):
         self.name = name
         self.description = description
         self.location = location
-        self.states = {}
+        self.states = []
 
 class Game(object):
     def __init__(self, title: str, start, end, locations, connections, objects, states, actions, verbs):
@@ -68,7 +68,12 @@ class Game(object):
 
     def load_object_states(self):
         for state in self.states:
-            state.related.states[state.name]=state
+            if state.related.states == None:
+                state.related.states = []
+            state.related.states.append(state)
+
+        for object in self.objects:
+            object.states.sort(key=lambda x: x.priority)
 
     def initialize(self, player: Object):
         self.player = player
@@ -87,7 +92,6 @@ class Game(object):
             else:
                 result = condition.state.state == condition.value
                 if not result:
-                    print('A')
                     if condition.message != None and doPrint:
                         print(condition.message.text)
                     return False 
@@ -141,14 +145,30 @@ class Game(object):
             i = i + 1
         print(connections)
 
-    def print_object(self, object, description):
-        print(object.description.text)
-        if description.__class__.__name__ == "DescribeConditions":
-            print(description.conditions.message.text)
-        if description.print_content:
-            for obj in self.objects:
-                if obj.location == object:
-                    print(f"\t{obj.name}")
+    def print_object(self, object):
+        if self.check_location(self.objectsDic[object]) or self.objectsDic[object].location == self.player:
+            print(self.objectsDic[object].description.text)
+            if self.objectsDic[object].states != []:
+                for state in self.objectsDic[object].states:
+                    if state.state:
+                        if state.true_message:
+                            print(state.true_message)
+                            break
+                    else:
+                        if state.false_message:
+                            print(state.false_message)
+                            break
+            for action in self.actions:
+                if action.__class__.__name__ == "DescribeAction":
+                    if action.related.name == object:
+                        if self.check_conditions(action.conditions):
+                            print(action.message.text)
+                            if action.print_content:
+                                for obj in self.objects:
+                                    if obj.location.name == object:
+                                        print(f"\t{obj.name}")
+        else:
+            print("There is no such object in this location")
 
     def print_inventory(self):
         inventory = []
@@ -193,28 +213,19 @@ class Game(object):
 
     def handle_custom_actions(self, verb, object):
         for action in self.actions:
-            if action.verb.name == verb and action.related.name == object:
-                if self.check_location(action.related) or action.related.location == self.player:
-                    if action.execution.__class__.__name__ == "StateAction":
-                        if action.execution.conditions != None:
-                            if self.check_conditions(action.execution.conditions, True):
-                                self.execute_changes(action.execution.changes)
-                                if action.execution.message != None:
-                                    print(action.execution.message.text) 
+            if action.__class__.__name__ == "StateAction":
+                if action.verb.name == verb and action.related.name == object:
+                    if self.check_location(action.related) or action.related.location == self.player:
+                        if action.conditions != None:
+                            if self.check_conditions(action.conditions, True):
+                                self.execute_changes(action.changes)
+                                if action.message != None:
+                                    print(action.message.text) 
                         else:
-                            self.execute_changes(action.execution.changes)
-                            if action.execution.message != None:
-                                print(action.execution.message.text) 
+                            self.execute_changes(action.changes)
+                            if action.message != None:
+                                print(action.message.text) 
                     else:
-                        for description in action.execution.description.texts:
-                            if description.__class__.__name__ == "DescribeConditions":
-                                if self.check_conditions(description.conditions):
-                                    self.print_object(action.related, description)
-                                    return
-                            else:
-                                self.print_object(action.related, description)
-                                return
-                else:
-                    print("That object doesn't exist in this location")
-                return
+                        print("That object doesn't exist in this location")
+                    return
         print("Not a valid object for a command")

@@ -24,6 +24,9 @@ class GamePlay(cmd.Cmd):
         'Describe current location'
         self.game.print_location(self.game.player.location)
 
+    def do_exam(self, arg):
+        self.game.print_object(arg)
+
     def do_inventory(self, arg):
         'List items in inventory'
         pass

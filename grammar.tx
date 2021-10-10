@@ -58,6 +58,7 @@ State:
     name=ID ':' 
     'object' '=' related=[ObjectLocation]
     'state' '=' state=BOOL
+    'priority' '=' priority=INT
     ('when_true' '=' true_message=STRING)?
     ('when_false' '=' false_message=STRING)?
 ;
@@ -75,31 +76,18 @@ LocationChange:
 ;
 
 Action:
-    verb=[Verb]  related=[Object] ':' execution=ActionType 
-;
-
-ActionType:
-    StateAction | DescribeAction
+    StateAction | DescribeAction 
 ;
 
 StateAction:
-    conditions=Conditions? 'changes' ':' changes+=Change ('success' ':' message=Message)?
+    verb=[Verb]  related=[Object] ':'  conditions=Conditions? 'changes' ':' changes+=Change ('success' ':' message=Message)?
 ;
 
 DescribeAction:
-    descriptions+=DescriptionType
-;
-
-DescriptionType:
-    BasicDescription | DescribeConditions
-;
-
-BasicDescription:
-    'basic' ('print_content' '=' print_content=BOOL)?
-;
-
-DescribeConditions:
-    conditions=StateConditions ('print_content' '=' print_content=BOOL)? (message=Message)?
+   'exam'  related=[Object] ':'  
+   conditions=StateConditions 
+   ('print_content' '=' print_content=BOOL)? 
+   (message=Message)?
 ;
 
 Description:

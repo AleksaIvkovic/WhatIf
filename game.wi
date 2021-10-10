@@ -37,18 +37,19 @@ states:
     trunk_unlocked:
         object = trunk
         state = false
-        when_true = "Trunk is unlocked"
+        priority = 1
         when_false = "Trunk is locked, you need a silver key to unlock it"
     trunk_opened:
         object = trunk
         state = false
-        when_true = "Trunk is opened"
+        priority = 2
         when_false = "Trunk is closed"
     door_unlocked:
         object = door
         state = false
+        priority = 1
         when_true = "Door is unlocked"
-        when_false = "Door is locked"
+        when_false = "Door is locked, you need a gold key"
 actions:
     open trunk :
         conditions:
@@ -59,6 +60,10 @@ actions:
         success:
             message = "You have opened the trunk"
     unlock trunk :
+        conditions:
+            silver_key:
+                location == player
+                message = "You need a silver_key to unlock the trunk"
         changes:
             trunk_unlocked = true
         success:
@@ -66,7 +71,6 @@ actions:
     get gold_key:
         conditions:
             trunk_opened == true
-            message = "The trunk is closed"
         changes:
             gold_key :
                 location = player
@@ -94,9 +98,6 @@ actions:
             trunk_opened == true
             print_content = true
             message = "Inside you see: "
-        basic
-    exam silver_key:
-        basic
 
 action_verbs:
     open
@@ -105,5 +106,3 @@ action_verbs:
     description = "Unlock an object"
     get
     description = "Pick up an object"
-    exam
-    description = "Rediscribes an object"
