@@ -12,6 +12,10 @@ locations :
         description = "You are in a small cell made of stone, It's very damp and cold. Through a small window you can see the night sky"
     hallway:
         description = "Narow hallway with no windows, there are torhces on the walls"
+        conditions:
+            cell_door_unlocked == true
+        failure:
+            message = "The cell door is locked"
     treasure_room:
         description = "You find yourself in a treasure room fit for a king, there are golden coins all around"
     terace:
@@ -29,9 +33,7 @@ connections :
 objects :
     silver_key:
         description = "Silver key"
-        location = cell
-        conditions:
-            rock_moved == true
+        location = none
     rock:
         description = "Gray rock"
         location = cell
@@ -60,6 +62,9 @@ objects :
     door:
         description = "Door to the terace"
         location = treasure_room
+    cell_door:
+        description = "Door leading out the cell"
+        location = cell
 
 states:
     rock_moved:
@@ -86,7 +91,14 @@ states:
         state = False
         priority = 1
         when_true = "Door is unlocked"
-        when_false = "Door is locked, you need a gold key"
+        when_false = "Door is locked, you need a magic key"
+    cell_door_unlocked:
+        object = cell_door
+        state = False
+        priority = 1
+        when_true = "Cell door is unlocked"
+        when_false = "Cell door is locked, you need a silver key"
+
 actions:
     move rock:
         changes:
@@ -103,6 +115,12 @@ actions:
                 location = player
         success:
             message = "You got the silver key"
+    get lamp:
+        changes:
+            lamp:
+                location = player
+        success:
+            message = "You got the lamp"
     break lamp:
         changes:
             lamp_broken = true
@@ -163,11 +181,9 @@ actions:
             message = "You made a magic key"
     unlock door:
         conditions:
-            platinum_key:
+            magic_key:
                 location == player
             message = "You need a magic key to unclok the door"
-            player:
-                location == hallway
         changes:
             door_unlocked = true
         success:
@@ -180,6 +196,18 @@ actions:
         conditions:
             lamp_broken == true
         print_content = true
+    unlock cell_door:
+        conditions:
+            silver_key:
+                location == player
+            message = "You need a silver key to unclok the cell door"
+            player:
+                location == cell
+        changes:
+            cell_door_unlocked = true
+        success:
+            message = "You uncloked the cell door"
+
 verbs:
     open:
         description = "Open an object"
@@ -189,3 +217,7 @@ verbs:
         description = "Pick up an object"
     make:
         description = "Make an object"
+    break:
+        description = "Break an object"
+    move:
+        description = "Move an object"

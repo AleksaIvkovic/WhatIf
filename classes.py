@@ -146,7 +146,7 @@ class Game(object):
                 connections += ", "
             i = i + 1
         print(connections)
-
+       
     def print_object(self, object):
         if self.check_location(self.objectsDic[object]) or self.objectsDic[object].location == self.player:
             if self.objectsDic[object].conditions != None:

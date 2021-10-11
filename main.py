@@ -50,7 +50,10 @@ class GamePlay(cmd.Cmd):
 
     def do_load(self, arg):
         'Load saved game'
+        self.started = True
+        player = self.game.player
         self.game = self.game_mm.model_from_file(join(dirname(__file__), 'SavedGame.wi'))
+        self.game.initialize(player)
         intro = f"\n\t\t{self.game.intro}\n\n"
         intro += self.game.location_as_string(self.game.start)
         print(intro)
@@ -72,7 +75,7 @@ class GamePlay(cmd.Cmd):
 @click.command()
 @click.option('--gamefile', default="game.wi", help="Full or relative path to the game file")
 def main(gamefile):
-    this_folder = dirname(os.path.abspath(__file__))
+    this_folder = dirname(__file__)
 
     player = Object(None, "player", None, None, None)
 
@@ -85,7 +88,6 @@ def main(gamefile):
     game_mm = metamodel_from_file(join(this_folder, 'grammar.tx'), classes=[Game, Object, Location], builtins = type_builtins)
 
     try:
-        print(join(this_folder, gamefile))
         game: Game = game_mm.model_from_file(join(this_folder, gamefile))
     except:
         try:
@@ -108,7 +110,8 @@ def main(gamefile):
         @docstring_parameter(verb.description.text)
         def handle_custom_actions(self, attr):
             '{0}'
-            self.game.handle_custom_actions(verb.name, attr)
+            if self.started:
+                self.game.handle_custom_actions(verb.name, attr)
         return handle_custom_actions
 
     for verb in game.verbs:
