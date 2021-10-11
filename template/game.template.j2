@@ -1,21 +1,24 @@
 title = "{{game.title}}"
+intro = "{{game.intro}}"
 start = {{game.player.location.name}}
 end : 
     conditions:
-    {%for condition in game.end.conditions%}
+    {%for condition in game.end.conditions.conditions%}
         {%if condition.__class__.__name__ == "StateCondition"%}
         {{condition.state.name}} == {{condition.value|lower}}
+        {%if condition.message%}
+        message = "{{condition.message.text}}"
+        {%endif%}
         {%else%}
         {{condition.object.name}}:
             location == {{condition.location.name}}
+        {%if condition.message%}
+            message = "{{condition.message.text}}"
+        {%endif%}
         {%endif%}
     {%endfor%}
-    {%if game.end.message.text != None%}
+    success:
         message = "{{game.end.message.text}}"
-        {%else%}
-        success = "{{game.end.message.success}}"
-        failure = "{{game.end.message.failure}}"
-    {%endif%}
 locations :
 {%for location in game.locations%}
     {{location.name}}:
@@ -25,17 +28,19 @@ locations :
         {%for condition in location.requirements.conditions%}
             {%if condition.__class__.__name__ == "StateCondition"%}
             {{condition.state.name}} == {{condition.value|lower}}
+            {%if condition.message%}
+            message = "{{condition.message.text}}"
+            {%endif%}
             {%else%}
             {{condition.object.name}}:
                 location == {{condition.location.name}}
+            {%if condition.message%}
+            message = "{{condition.message.text}}"
+            {%endif%}
             {%endif%}
         {%endfor%}
-        {%if location.requirements.message.text != None%}
-        message = "{{location.requirements.message.text}}"
-        {%else%}
-        success = "{{location.requirements.message.success}}"
-        failure = "{{location.requirements.message.failure}}"
-        {%endif%}
+        failure:
+            message = "{{location.message.text}}"
     {%endif%}
 {%endfor%}
 
@@ -49,6 +54,23 @@ objects :
     {{object.name}}:
         description = "{{object.description.text}}"
         location = {{object.location.name}}
+        {%if object.conditions%}
+        conditions:
+        {%for condition in object.conditions.conditions%}
+            {%if condition.__class__.__name__ == "StateCondition"%}
+            {{condition.state.name}} == {{condition.value|lower}}
+            {%if condition.message%}
+            message = "{{condition.message.text}}"
+            {%endif%}
+            {%else%}
+            {{condition.object.name}}:
+                location == {{condition.location.name}}
+            {%if condition.message%}
+            message = "{{condition.message.text}}"
+            {%endif%}
+            {%endif%}
+        {%endfor%}
+    {%endif%}
 {%endfor%}
 
 states:
@@ -56,33 +78,35 @@ states:
     {{state.name}}:
         object = {{state.related.name}}
         state = {{state.state}}
+        priority = {{state.priority}}
+        {%if state.true_message%}
         when_true = "{{state.true_message}}"
+        {%endif%}
+        {%if state.false_message%}
         when_false = "{{state.false_message}}"
+        {%endif%}
 {%endfor%}
 
 actions:
 {%for action in game.actions%}
+    {%if action.__class__.__name__ == "StateAction"%}
     {{action.verb.name}} {{action.related.name}}:
-        {%if action.execution.__class__.__name__ == "StateAction"%}
-        {%if action.execution.conditions%}
+        {%if action.conditions%}
         conditions:
-        {%for condition in action.execution.conditions.conditions%}
+        {%for condition in action.conditions.conditions%}
         {%if condition.__class__.__name__ == "StateCondition"%}
             {{condition.state.name}} == {{condition.value|lower}}
         {%else%}
-        {{condition.object.name}}:
-            location == {{condition.location.name}}
+            {{condition.object.name}}:
+                location == {{condition.location.name}}
+        {%endif%}
+        {%if condition.message%}
+            message = "{{condition.message.text}}"
         {%endif%}
         {%endfor%}
-        {%if action.execution.conditions.message.text != None%}
-            message = "{{action.execution.conditions.message.text}}"
-            {%else%}
-            success = "{{action.execution.conditions.message.success}}"
-            failure = "{{action.execution.conditions.message.failure}}"
-        {%endif%}
         {%endif%}
         changes:
-        {%for change in action.execution.changes%}
+        {%for change in action.changes%}
         {%if change.__class__.__name__ == "StateValueChange"%}
             {{change.state.name}} = {{change.value|lower}}
         {%else%}
@@ -90,6 +114,37 @@ actions:
                 location = {{change.location.name}}
         {%endif%}
         {%endfor%}
-        {%else%}
+        {%if action.message%}
+        success:
+            message = "{{action.message.text}}"
         {%endif%}
+    {%else%}
+    exam {{action.related.name}}:
+        {%if action.conditions%}
+        conditions:
+        {%for condition in action.conditions.conditions%}
+        {%if condition.__class__.__name__ == "StateCondition"%}
+            {{condition.state.name}} == {{condition.value|lower}}
+        {%else%}
+            {{condition.object.name}}:
+                location == {{condition.location.name}}
+        {%endif%}
+        {%if condition.message%}
+            message = "{{condition.message.text}}"
+        {%endif%}
+        {%endfor%}
+        {%endif%}
+        {%if action.print_content%}
+        print_content = {{action.print_content|lower}}
+        {%endif%}
+        {%if action.message%}
+        message = "{{action.message.text}}"
+        {%endif%}
+    {%endif%}
 {%endfor%}
+
+verbs:
+    {%for verb in game.verbs%}
+    {{verb.name}}:
+        description = "{{verb.description.text}}"
+    {%endfor%}

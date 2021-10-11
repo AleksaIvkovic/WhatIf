@@ -1,5 +1,6 @@
 Game: 
     'title' '=' title=STRING
+    'intro' '=' intro=STRING
     'start' '=' start=[Location]
     'end' ':' end=GameEnd
     'locations' ':' locations+=Location
@@ -7,7 +8,7 @@ Game:
     'objects' ':' objects+=Object
     'states' ':' states+=State
     'actions' ':' actions+=Action
-    'action_verbs' ':' verbs+=Verb
+    'verbs' ':' verbs+=Verb
 ;
 
 GameEnd:
@@ -15,23 +16,23 @@ GameEnd:
 ;
 
 Verb:
-    name=ID description=Description
+    name=CID ':' description=Description
 ;
 
 Location:
-    name=ID ':' description=Description (requirements=Conditions 'failure' ':' message=Message)? 
+    name=CID ':' description=Description (requirements=Conditions 'failure' ':' message=Message)? 
 ;
 
 Conditions:
     'conditions' ':' conditions+=Condition
 ;
 
-StateConditions:
-    'conditions' ':' conditions+=StateCondition
+ConditionWithMessage:
+    Condition message=Message
 ;
 
 Condition:
-    StateCondition | LocationCondition
+    StateCondition | LocationCondition 
 ;
 
 StateCondition:
@@ -51,11 +52,11 @@ Connection:
 ;
 
 Object:
-    name=ID ':' description=Description? 'location' '=' location=[ObjectLocation] 
+    name=CID ':' description=Description? 'location' '=' location=[ObjectLocation] conditions=Conditions? 
 ;
 
 State:
-    name=ID ':' 
+    name=CID ':' 
     'object' '=' related=[ObjectLocation]
     'state' '=' state=BOOL
     'priority' '=' priority=INT
@@ -85,10 +86,11 @@ StateAction:
 
 DescribeAction:
    'exam'  related=[Object] ':'  
-   conditions=StateConditions 
+   conditions=Conditions 
    ('print_content' '=' print_content=BOOL)? 
    (message=Message)?
 ;
+
 
 Description:
     'description' '=' text=STRING
@@ -100,4 +102,15 @@ Message:
 
 Direction:
     "N" | "E" | "S" | "W" | "NE" | "NW" | "SE" | "SW"
+;
+
+CID:
+    !Keywords ID
+;
+
+Keywords:
+    'message' | 'description' | 'print_content' | 'exam' | 'changes' | 'success' | 'location' |
+    'object' | 'state' | 'priority' | 'when_true' | 'when_false' | 'conditions' | 'failure' | 
+    'title'  | 'intro'  | 'start' | 'end' | 'locations' | 'connections' | 'objects' | 'states' | 
+    'actions' | 'action_verbs' | 'look' | 'go' | 'save' | 'load' | 'inventory' | 'exit' | 'none' | 'destroyed'
 ;

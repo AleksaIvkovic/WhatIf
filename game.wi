@@ -1,57 +1,122 @@
-title = "Castle of darknes"
+title = "Castle of darkness"
+intro = "Get the hell out"
 start = cell
 end : 
-    conditions : 
-        player : 
+    conditions:
+        player:
             location == terace
-    success :
+    success:
         message = "Congratulations you won"
 locations :
-    cell :
-        description = "Dark place with barelly any light"
-    hallway :
-        description = "Narow hallway with small windows"
-    terace :
+    cell:
+        description = "You are in a small cell made of stone, It's very damp and cold. Through a small window you can see the night sky"
+    hallway:
+        description = "Narow hallway with no windows, there are torhces on the walls"
+    treasure_room:
+        description = "You find yourself in a treasure room fit for a king, there are golden coins all around"
+    terace:
         description = "Large terace overlooking the forest"
         conditions:
             door_unlocked == true
         failure:
             message = "The door is locked"
-connections:
+
+connections :
     cell N hallway
-    hallway W terace
-objects:
-    trunk:
-        description = "Old trunk"
-        location = hallway
-    gold_key:
-        description = "Gold key"
-        location = trunk
+    hallway W treasure_room
+    treasure_room W terace
+
+objects :
     silver_key:
         description = "Silver key"
         location = cell
+        conditions:
+            rock_moved == true
+    rock:
+        description = "Gray rock"
+        location = cell
+    hay:
+        description = "Pile of hay"
+        location = cell
+    lamp:
+        description = "Old oil lamp"
+        location = hallway
+    brass_key:
+        description = "Brass key"
+        location = lamp
+        conditions:
+            lamp_broken == true
+    trunk:
+        description = "Old trunk"
+        location = treasure_room
+    gld_key:
+        description = "Gold key"
+        location = trunk
+        conditions:
+            trunk_opened == true
+    magic_key:
+        description = "Magic key"
+        location = none
     door:
         description = "Door to the terace"
-        location = hallway
+        location = treasure_room
+
 states:
+    rock_moved:
+        object = rock
+        state = False
+        priority = 1
+    lamp_broken:
+        object = lamp
+        state = False
+        priority = 1
+        when_true = "It is broken"
     trunk_unlocked:
         object = trunk
-        state = false
+        state = False
         priority = 1
         when_false = "Trunk is locked, you need a silver key to unlock it"
     trunk_opened:
         object = trunk
-        state = false
+        state = False
         priority = 2
         when_false = "Trunk is closed"
     door_unlocked:
         object = door
-        state = false
+        state = False
         priority = 1
         when_true = "Door is unlocked"
         when_false = "Door is locked, you need a gold key"
 actions:
-    open trunk :
+    move rock:
+        changes:
+            rock_moved = true
+            silver_key:
+                location = cell
+        success:
+            message = "You moved the rock"
+    get silver_key:
+        conditions:
+            rock_moved == true
+        changes:
+            silver_key:
+                location = player
+        success:
+            message = "You got the silver key"
+    break lamp:
+        changes:
+            lamp_broken = true
+        success:
+            message = "You broke the lamp"
+    get brass_key:
+        conditions:
+            lamp_broken == true
+        changes:
+            brass_key:
+                location = player
+        success:
+            message = "You got the brass key"
+    open trunk:
         conditions:
             trunk_unlocked == true
             message = "The trunk is locked"
@@ -59,35 +124,49 @@ actions:
             trunk_opened = true
         success:
             message = "You have opened the trunk"
-    unlock trunk :
+    unlock trunk:
         conditions:
             silver_key:
                 location == player
-                message = "You need a silver_key to unlock the trunk"
+            message = "You need a silver_key to unlock the trunk"
         changes:
             trunk_unlocked = true
         success:
             message = "You have unlocked the trunk"
-    get gold_key:
+    get gld_key:
         conditions:
             trunk_opened == true
+            message = "Gld_key is not in this location"
         changes:
-            gold_key :
+            gld_key:
                 location = player
         success:
             message = "You got the gold key"
-    get silver_key:
+    make magic_key:
+        conditions:
+            silver_key:
+                location == player
+            gld_key:
+                location == player
+            brass_key:
+                location == player
         changes:
-            silver_key :
+            magic_key:
                 location = player
+            silver_key:
+                location = destroyed
+            brass_key:
+                location = destroyed
+            gld_key:
+                location = destroyed
         success:
-            message = "You got the silver key"
+            message = "You made a magic key"
     unlock door:
         conditions:
-            gold_key :
+            platinum_key:
                 location == player
-                message = "You need a gold key to unclok the door" 
-            player :
+            message = "You need a magic key to unclok the door"
+            player:
                 location == hallway
         changes:
             door_unlocked = true
@@ -96,13 +175,21 @@ actions:
     exam trunk:
         conditions:
             trunk_opened == true
-            print_content = true
-            message = "Inside you see: "
-
-action_verbs:
-    open
-    description = "Open an object"
-    unlock
-    description = "Unlock an object"
-    get
-    description = "Pick up an object"
+        print_content = true
+    exam lamp:
+        conditions:
+            lamp_broken == true
+        print_content = true
+verbs:
+    open:
+        description = "Open an object"
+    unlock:
+        description = "Unlock an object"
+    get:
+        description = "Pick up an object"
+    make:
+        description = "Make an object"
+    break:
+        description = "Break an object"
+    move:
+        description = "Move an object"

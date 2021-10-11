@@ -11,98 +11,105 @@
     edge[dir=black,arrowtail=empty]
 
 
-1377779468512[ label="{Game|title: STRING\l}"]
+2760459958912[ label="{Game|title: STRING\lintro: STRING\l}"]
 
-1377779479840[ label="{GameEnd|}"]
+2760459986288[ label="{GameEnd|}"]
 
-1377779462848[ label="{Verb|name: ID\l}"]
+2760459991008[ label="{Verb|name: CID\l}"]
 
-1377779449632[ label="{Location|name: ID\l}"]
+2760459954192[ label="{Location|name: CID\l}"]
 
-1377779484560[ label="{Conditions|}"]
+2760459991952[ label="{Conditions|}"]
 
-1377779488336[ label="{StateConditions|}"]
+2760459969296[ label="{ConditionWithMessage|}"]
 
-1377779491168[ label="{*Condition|}"]
+2760459997616[ label="{*Condition|}"]
 
-1377779493056[ label="{StateCondition|value: BOOL\l}"]
+2760459996672[ label="{StateCondition|value: BOOL\l}"]
 
-1377779494000[ label="{LocationCondition|}"]
+2760460000448[ label="{LocationCondition|}"]
 
-1377779498720[ label="{*ObjectLocation|}"]
+2760459994784[ label="{*ObjectLocation|}"]
 
-1377779501552[ label="{Connection|direction: Direction\l}"]
+2760459973072[ label="{Connection|direction: Direction\l}"]
 
-1377779474176[ label="{Object|name: ID\l}"]
+2760459955136[ label="{Object|name: CID\l}"]
 
-1377779504384[ label="{State|name: ID\lstate: BOOL\lpriority: INT\ltrue_message: STRING\lfalse_message: STRING\l}"]
+2760459999504[ label="{State|name: CID\lstate: BOOL\lpriority: INT\ltrue_message: STRING\lfalse_message: STRING\l}"]
 
-1377809852160[ label="{*Change|}"]
+2760459985344[ label="{*Change|}"]
 
-1377809849328[ label="{StateValueChange|value: BOOL\l}"]
+2760460013664[ label="{StateValueChange|value: BOOL\l}"]
 
-1377809854992[ label="{LocationChange|}"]
+2760460002336[ label="{LocationChange|}"]
 
-1377809839888[ label="{*Action|}"]
+2760460007056[ label="{*Action|}"]
 
-1377809854048[ label="{StateAction|}"]
+2760460009888[ label="{StateAction|}"]
 
-1377809857824[ label="{DescribeAction|print_content: BOOL\l}"]
+2760460014608[ label="{DescribeAction|print_content: BOOL\l}"]
 
-1377809860656[ label="{Description|text: STRING\l}"]
+2760460003280[ label="{Description|text: STRING\l}"]
 
-1377809861600[ label="{Message|text: STRING\l}"]
+2760459972128[ label="{Message|text: STRING\l}"]
 
 
 
-1377779468512 -> 1377779449632[headlabel="start "]
-1377779468512 -> 1377779479840[arrowtail=diamond, dir=both, headlabel="end "]
-1377779468512 -> 1377779449632[arrowtail=diamond, dir=both, headlabel="locations 1..*"]
-1377779468512 -> 1377779501552[arrowtail=diamond, dir=both, headlabel="connections 1..*"]
-1377779468512 -> 1377779474176[arrowtail=diamond, dir=both, headlabel="objects 1..*"]
-1377779468512 -> 1377779504384[arrowtail=diamond, dir=both, headlabel="states 1..*"]
-1377779468512 -> 1377809839888[arrowtail=diamond, dir=both, headlabel="actions 1..*"]
-1377779468512 -> 1377779462848[arrowtail=diamond, dir=both, headlabel="verbs 1..*"]
-1377779479840 -> 1377779484560[arrowtail=diamond, dir=both, headlabel="conditions "]
-1377779479840 -> 1377809861600[arrowtail=diamond, dir=both, headlabel="message "]
-1377779462848 -> 1377809860656[arrowtail=diamond, dir=both, headlabel="description "]
-1377779449632 -> 1377809860656[arrowtail=diamond, dir=both, headlabel="description "]
-1377779449632 -> 1377779484560[arrowtail=diamond, dir=both, headlabel="requirements "]
-1377779449632 -> 1377809861600[arrowtail=diamond, dir=both, headlabel="message "]
-1377779484560 -> 1377779491168[arrowtail=diamond, dir=both, headlabel="conditions 1..*"]
-1377779488336 -> 1377779493056[arrowtail=diamond, dir=both, headlabel="conditions 1..*"]
-1377779491168 -> 1377779493056 [dir=back]
-1377779491168 -> 1377779494000 [dir=back]
-1377779493056 -> 1377779504384[headlabel="state "]
-1377779493056 -> 1377809861600[arrowtail=diamond, dir=both, headlabel="message "]
-1377779494000 -> 1377779474176[headlabel="object "]
-1377779494000 -> 1377779498720[headlabel="location "]
-1377779494000 -> 1377809861600[arrowtail=diamond, dir=both, headlabel="message "]
-1377779498720 -> 1377779449632 [dir=back]
-1377779498720 -> 1377779474176 [dir=back]
-1377779501552 -> 1377779449632[headlabel="from_location "]
-1377779501552 -> 1377779449632[headlabel="to_location "]
-1377779474176 -> 1377809860656[arrowtail=diamond, dir=both, headlabel="description "]
-1377779474176 -> 1377779498720[headlabel="location "]
-1377779504384 -> 1377779498720[headlabel="related "]
-1377809852160 -> 1377809849328 [dir=back]
-1377809852160 -> 1377809854992 [dir=back]
-1377809849328 -> 1377779504384[headlabel="state "]
-1377809854992 -> 1377779474176[headlabel="object "]
-1377809854992 -> 1377779498720[headlabel="location "]
-1377809839888 -> 1377809854048 [dir=back]
-1377809839888 -> 1377809857824 [dir=back]
-1377809854048 -> 1377779462848[headlabel="verb "]
-1377809854048 -> 1377779474176[headlabel="related "]
-1377809854048 -> 1377779484560[arrowtail=diamond, dir=both, headlabel="conditions "]
-1377809854048 -> 1377809852160[arrowtail=diamond, dir=both, headlabel="changes 1..*"]
-1377809854048 -> 1377809861600[arrowtail=diamond, dir=both, headlabel="message "]
-1377809857824 -> 1377779474176[headlabel="related "]
-1377809857824 -> 1377779488336[arrowtail=diamond, dir=both, headlabel="conditions "]
-1377809857824 -> 1377809861600[arrowtail=diamond, dir=both, headlabel="message "]
+2760459958912 -> 2760459954192[headlabel="start "]
+2760459958912 -> 2760459986288[arrowtail=diamond, dir=both, headlabel="end "]
+2760459958912 -> 2760459954192[arrowtail=diamond, dir=both, headlabel="locations 1..*"]
+2760459958912 -> 2760459973072[arrowtail=diamond, dir=both, headlabel="connections 1..*"]
+2760459958912 -> 2760459955136[arrowtail=diamond, dir=both, headlabel="objects 1..*"]
+2760459958912 -> 2760459999504[arrowtail=diamond, dir=both, headlabel="states 1..*"]
+2760459958912 -> 2760460007056[arrowtail=diamond, dir=both, headlabel="actions 1..*"]
+2760459958912 -> 2760459991008[arrowtail=diamond, dir=both, headlabel="verbs 1..*"]
+2760459986288 -> 2760459991952[arrowtail=diamond, dir=both, headlabel="conditions "]
+2760459986288 -> 2760459972128[arrowtail=diamond, dir=both, headlabel="message "]
+2760459991008 -> 2760460003280[arrowtail=diamond, dir=both, headlabel="description "]
+2760459954192 -> 2760460003280[arrowtail=diamond, dir=both, headlabel="description "]
+2760459954192 -> 2760459991952[arrowtail=diamond, dir=both, headlabel="requirements "]
+2760459954192 -> 2760459972128[arrowtail=diamond, dir=both, headlabel="message "]
+2760459991952 -> 2760459997616[arrowtail=diamond, dir=both, headlabel="conditions 1..*"]
+2760459969296 -> 2760459972128[arrowtail=diamond, dir=both, headlabel="message "]
+2760459997616 -> 2760459996672 [dir=back]
+2760459997616 -> 2760460000448 [dir=back]
+2760459996672 -> 2760459999504[headlabel="state "]
+2760459996672 -> 2760459972128[arrowtail=diamond, dir=both, headlabel="message "]
+2760460000448 -> 2760459955136[headlabel="object "]
+2760460000448 -> 2760459994784[headlabel="location "]
+2760460000448 -> 2760459972128[arrowtail=diamond, dir=both, headlabel="message "]
+2760459994784 -> 2760459954192 [dir=back]
+2760459994784 -> 2760459955136 [dir=back]
+2760459973072 -> 2760459954192[headlabel="from_location "]
+2760459973072 -> 2760459954192[headlabel="to_location "]
+2760459955136 -> 2760460003280[arrowtail=diamond, dir=both, headlabel="description "]
+2760459955136 -> 2760459994784[headlabel="location "]
+2760459955136 -> 2760459991952[arrowtail=diamond, dir=both, headlabel="conditions "]
+2760459999504 -> 2760459994784[headlabel="related "]
+2760459985344 -> 2760460013664 [dir=back]
+2760459985344 -> 2760460002336 [dir=back]
+2760460013664 -> 2760459999504[headlabel="state "]
+2760460002336 -> 2760459955136[headlabel="object "]
+2760460002336 -> 2760459994784[headlabel="location "]
+2760460007056 -> 2760460009888 [dir=back]
+2760460007056 -> 2760460014608 [dir=back]
+2760460009888 -> 2760459991008[headlabel="verb "]
+2760460009888 -> 2760459955136[headlabel="related "]
+2760460009888 -> 2760459991952[arrowtail=diamond, dir=both, headlabel="conditions "]
+2760460009888 -> 2760459985344[arrowtail=diamond, dir=both, headlabel="changes 1..*"]
+2760460009888 -> 2760459972128[arrowtail=diamond, dir=both, headlabel="message "]
+2760460014608 -> 2760459955136[headlabel="related "]
+2760460014608 -> 2760459991952[arrowtail=diamond, dir=both, headlabel="conditions "]
+2760460014608 -> 2760459972128[arrowtail=diamond, dir=both, headlabel="message "]
 match_rules [ shape=plaintext, label=< <table>
 	<tr>
+		<td><b>CID</b></td><td>Not(Keywords) ID</td>
+	</tr>
+	<tr>
 		<td><b>Direction</b></td><td>N|E|S|W|NE|NW|SE|SW</td>
+	</tr>
+	<tr>
+		<td><b>Keywords</b></td><td>message|description|print_content|exam|changes|success|location|object|state|priority|when_true|when_false|conditions|failure|title|intro|start|end|locations|connections|objects|states|actions|action_verbs|look|go|save|load|inventory|exit|none|destroyed</td>
 	</tr>
 </table> >]
 
